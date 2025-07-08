@@ -3,6 +3,12 @@
 @section('content')
 <h1>映画一覧（管理画面）</h1>
 
+@if(session('success'))
+    <div style="color: green; margin-bottom: 10px;">
+        {{ session('success') }}
+    </div>
+@endif
+
 <table border="1" cellpadding="8" cellspacing="0">
     <thead>
         <tr>
@@ -13,6 +19,8 @@
             <th>上映状況</th>
             <th>概要</th>
             <th>詳細</th>
+            <th>編集</th>
+            <th>削除</th> {{-- 削除列追加 --}}
         </tr>
     </thead>
     <tbody>
@@ -26,6 +34,13 @@
             <td>{{ Str::limit($movie->description, 50) }}</td>
             <td><a href="{{ route('admin.movies.show', $movie->id) }}">詳細</a></td>
             <td><a href="{{ route('admin.movies.edit', ['id' => $movie->id]) }}">編集</a></td>
+            <td>
+                <form method="POST" action="{{ route('admin.movies.destroy', ['id' => $movie->id]) }}" onsubmit="return confirm('本当に削除しますか？');">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" style="color: red;">削除</button>
+                </form>
+            </td>
         </tr>
     @endforeach
     </tbody>

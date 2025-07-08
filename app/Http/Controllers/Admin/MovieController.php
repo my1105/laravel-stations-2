@@ -25,31 +25,26 @@ class MovieController extends Controller
         return view('admin.movies.create');
     }
 
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'title' => 'required|unique:movies,title',
-            'image_url' => 'required|url',
-            'published_year' => 'required|integer',
-            'description' => 'required',
-            'is_showing' => 'required|boolean',
-        ]);
-
-        Movie::create([
-            'title' => $validated['title'],
-            'image_url' => $validated['image_url'],
-            'published_year' => $validated['published_year'],
-            'is_showing' => $request->has('is_showing'),
-            'description' => $validated['description'],
-        ]);
-
-        return redirect()->route('admin.movies.index')->with('success', '映画を登録しました');
-    }
-
-    public function edit($id)
+public function store(Request $request)
 {
-    $movie = Movie::findOrFail($id);
-    return view('admin.movies.edit', compact('movie'));
+    $validated = $request->validate([
+        'title' => 'required|unique:movies,title',
+        'image_url' => 'required|url',
+        'published_year' => 'required|integer',
+        'description' => 'required',
+        'is_showing' => 'boolean',
+    ]);
+
+    Movie::create([
+        'title' => $validated['title'],
+        'image_url' => $validated['image_url'],
+        'published_year' => $validated['published_year'],
+        'description' => $validated['description'],
+        'is_showing' => $request->boolean('is_showing'),
+    ]);
+
+
+    return redirect()->route('admin.movies.index')->with('success', '映画を登録しました');
 }
 
 public function update(Request $request, $id)
@@ -61,7 +56,7 @@ public function update(Request $request, $id)
         'image_url' => 'required|url',
         'published_year' => 'required|integer',
         'description' => 'required',
-        'is_showing' => 'required|boolean',
+        'is_showing' => 'boolean',
     ]);
 
     $movie->update([
@@ -69,10 +64,27 @@ public function update(Request $request, $id)
         'image_url' => $validated['image_url'],
         'published_year' => $validated['published_year'],
         'description' => $validated['description'],
-        'is_showing' => $request->has('is_showing'),
+        'is_showing' => $request->boolean('is_showing'),
     ]);
+
 
     return redirect()->route('admin.movies.index')->with('success', '映画情報を更新しました');
 }
+
+public function edit($id)
+{
+    $movie = Movie::findOrFail($id);
+    return view('admin.movies.edit', compact('movie'));
+}
+
+
+public function destroy($id)
+{
+    $movie = Movie::findOrFail($id);
+    $movie->delete();
+
+    return redirect()->route('admin.movies.index')->with('success', '映画を削除しました');
+}
+
 
 }
