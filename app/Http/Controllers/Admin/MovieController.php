@@ -32,7 +32,7 @@ class MovieController extends Controller
             'image_url' => 'required|url',
             'published_year' => 'required|integer',
             'description' => 'required',
-            'is_showing' => 'required|boolean', 
+            'is_showing' => 'required|boolean',
         ]);
 
         Movie::create([
@@ -45,4 +45,34 @@ class MovieController extends Controller
 
         return redirect()->route('admin.movies.index')->with('success', '映画を登録しました');
     }
+
+    public function edit($id)
+{
+    $movie = Movie::findOrFail($id);
+    return view('admin.movies.edit', compact('movie'));
+}
+
+public function update(Request $request, $id)
+{
+    $movie = Movie::findOrFail($id);
+
+    $validated = $request->validate([
+        'title' => 'required|unique:movies,title,' . $movie->id,
+        'image_url' => 'required|url',
+        'published_year' => 'required|integer',
+        'description' => 'required',
+        'is_showing' => 'required|boolean',
+    ]);
+
+    $movie->update([
+        'title' => $validated['title'],
+        'image_url' => $validated['image_url'],
+        'published_year' => $validated['published_year'],
+        'description' => $validated['description'],
+        'is_showing' => $request->has('is_showing'),
+    ]);
+
+    return redirect()->route('admin.movies.index')->with('success', '映画情報を更新しました');
+}
+
 }

@@ -17,4 +17,8 @@ Route::prefix('admin')->group(function () {
     Route::get('movies/create', [AdminMovieController::class, 'create'])->name('admin.movies.create');
     Route::post('movies/store', [AdminMovieController::class, 'store'])->name('admin.movies.store');
     Route::get('movies/{id}', [AdminMovieController::class, 'show'])->name('admin.movies.show');
+    Route::get('movies/{id}/edit', [AdminMovieController::class, 'edit'])->name('admin.movies.edit');
+    Route::patch('movies/{id}/update', [AdminMovieController::class, 'update'])->name('admin.movies.update');
+
+
 });

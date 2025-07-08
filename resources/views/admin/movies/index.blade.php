@@ -25,6 +25,7 @@
             <td>{{ $movie->is_showing ? '上映中' : '上映予定' }}</td>
             <td>{{ Str::limit($movie->description, 50) }}</td>
             <td><a href="{{ route('admin.movies.show', $movie->id) }}">詳細</a></td>
+            <td><a href="{{ route('admin.movies.edit', ['id' => $movie->id]) }}">編集</a></td>
         </tr>
     @endforeach
     </tbody>
