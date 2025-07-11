@@ -18,9 +18,10 @@
             <th>公開年</th>
             <th>上映状況</th>
             <th>概要</th>
+            <th>ジャンル</th>
             <th>詳細</th>
             <th>編集</th>
-            <th>削除</th> {{-- 削除列追加 --}}
+            <th>削除</th>
         </tr>
     </thead>
     <tbody>
@@ -32,6 +33,7 @@
             <td>{{ $movie->published_year }}</td>
             <td>{{ $movie->is_showing ? '上映中' : '上映予定' }}</td>
             <td>{{ Str::limit($movie->description, 50) }}</td>
+            <td>{{ $movie->genre->name ?? 'ジャンル未設定' }}</td>
             <td><a href="{{ route('admin.movies.show', $movie->id) }}">詳細</a></td>
             <td><a href="{{ route('admin.movies.edit', ['id' => $movie->id]) }}">編集</a></td>
             <td>

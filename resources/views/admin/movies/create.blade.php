@@ -34,6 +34,12 @@
     <input type="hidden" name="is_showing" value="0">
     <input type="checkbox" name="is_showing" value="1" {{ old('is_showing') ? 'checked' : '' }}>
 
+    <div>
+    <label>ジャンル</label>
+    <input type="text" name="genre" value="{{ old('genre') }}" required>
+    @error('genre')<div>{{ $message }}</div>@enderror
+    </div>
+
 
     <button type="submit">登録</button>
 </form>

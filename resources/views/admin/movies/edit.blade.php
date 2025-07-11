@@ -20,5 +20,12 @@
         上映中
     </label>
 
+    <label for="genre">ジャンル</label>
+    <input type="text" name="genre" id="genre" value="{{ old('genre', $movie->genre->name ?? '') }}" required>
+    @error('genre')
+        <div class="error">{{ $message }}</div>
+    @enderror
+
+
     <button type="submit">更新</button>
 </form>
