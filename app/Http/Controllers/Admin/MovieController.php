@@ -86,5 +86,20 @@ public function destroy($id)
     return redirect()->route('admin.movies.index')->with('success', '映画を削除しました');
 }
 
+private function validateMovie(Request $request, ?int $id = null)
+{
+    $ruleUnique = 'unique:movies,title';
+    if ($id) {
+        $ruleUnique .= ',' . $id;
+    }
+
+    return $request->validate([
+        'title' => ['required', $ruleUnique],
+        'image_url' => ['required', 'url'],
+        'published_year' => ['required', 'integer'],
+        'description' => ['required'],
+        'is_showing' => ['required', 'boolean'],
+    ]);
+}
 
 }
