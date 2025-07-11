@@ -12,8 +12,9 @@ class DatabaseSeeder extends Seeder
      *
      * @return void
      */
-    public function run()
-    {
-        Practice::factory(10)->create();
-    }
+public function run()
+{
+    $this->call(SheetSeeder::class);
+}
+
 }

@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PracticeController;
 use App\Http\Controllers\MovieController as PublicMovieController;
 use App\Http\Controllers\Admin\MovieController as AdminMovieController;
+use App\Http\Controllers\SheetController;
 
 Route::get('/practice', [PracticeController::class, 'sample']);
 Route::get('/practice2', [PracticeController::class, 'sample2']);
@@ -22,3 +23,6 @@ Route::prefix('admin')->group(function () {
     Route::delete('movies/{id}/destroy', [AdminMovieController::class, 'destroy'])->name('admin.movies.destroy');
 
 });
+
+
+Route::get('/sheets', [SheetController::class, 'index'])->name('sheets.index');
