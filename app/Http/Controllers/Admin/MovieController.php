@@ -19,13 +19,14 @@ class MovieController extends Controller
 
     public function show($id)
     {
-        $movie = Movie::findOrFail($id);
 
-        $schedules = Schedule::where('movie_id', $movie->id)
-                             ->orderBy('start_time', 'asc')
-                             ->get();
+    $movie = Movie::findOrFail($id);
 
-        return view('movies.show', compact('movie', 'schedules'));
+    $schedules = Schedule::where('movie_id', $movie->id)
+                         ->orderBy('start_time', 'asc')
+                         ->get();
+
+    return view('admin.movies.show', compact('movie', 'schedules'));
     }
 
     public function create()
@@ -111,7 +112,7 @@ class MovieController extends Controller
         }
 
         return $request->validate([
-            'title' => ['required', $ruleUnique, 'max:500'], 
+            'title' => ['required', $ruleUnique, 'max:500'],
             'published_year' => ['required', 'integer'],
             'description' => ['required'],
             'is_showing' => ['required', 'boolean'],

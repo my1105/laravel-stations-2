@@ -11,5 +11,23 @@
 <p><strong>上映状況:</strong> {{ $movie->is_showing ? '上映中' : '上映予定' }}</p>
 <p><strong>概要:</strong> {{ $movie->description }}</p>
 
+<h2>上映スケジュール</h2>
+<table border="1" cellpadding="5" cellspacing="0">
+    <thead>
+        <tr>
+            <th>開始時刻</th>
+            <th>終了時刻</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach ($movie->schedules as $schedule)
+            <tr>
+                <td>{{ $schedule->start_time->format('Y-m-d H:i:s') }}</td>
+                <td>{{ $schedule->end_time->format('Y-m-d H:i:s') }}</td>
+            </tr>
+        @endforeach
+    </tbody>
+</table>
+
 <a href="{{ route('admin.movies.index') }}">一覧に戻る</a>
 @endsection

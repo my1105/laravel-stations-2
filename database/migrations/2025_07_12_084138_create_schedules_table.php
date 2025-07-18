@@ -10,9 +10,9 @@ return new class extends Migration
     {
         Schema::create('schedules', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('movie_id')->constrained()->onDelete('cascade'); 
-            $table->time('start_time');
-            $table->time('end_time');
+            $table->foreignId('movie_id')->constrained()->onDelete('cascade');
+            $table->dateTime('start_time');
+            $table->dateTime('end_time');
             $table->timestamps();
         });
     }
