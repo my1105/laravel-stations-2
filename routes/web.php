@@ -5,6 +5,7 @@ use App\Http\Controllers\PracticeController;
 use App\Http\Controllers\MovieController as PublicMovieController;
 use App\Http\Controllers\Admin\MovieController as AdminMovieController;
 use App\Http\Controllers\SheetController;
+use App\Http\Controllers\MovieController;
 
 Route::get('/practice', [PracticeController::class, 'sample']);
 Route::get('/practice2', [PracticeController::class, 'sample2']);
@@ -26,3 +27,4 @@ Route::prefix('admin')->group(function () {
 
 
 Route::get('/sheets', [SheetController::class, 'index'])->name('sheets.index');
+Route::get('/movies/{id}', [PublicMovieController::class, 'show'])->name('movies.show');

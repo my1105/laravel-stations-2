@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Movie;
 
+
 class MovieController extends Controller
 {
     public function index(Request $request)
@@ -27,4 +28,20 @@ class MovieController extends Controller
 
         return view('movies.index', compact('movies'));
     }
+
+
+
+    public function show($id)
+    {
+        $movie = Movie::with(['schedules' => function ($query) {
+            $query->orderBy('start_time', 'asc');
+        }])->findOrFail($id);
+
+        $schedules = $movie->schedules;
+
+        return view('movies.show', compact('movie', 'schedules'));
+    }
+
+
+
 }
