@@ -28,6 +28,13 @@
         @endforeach
     </tbody>
 </table>
+<a href="{{ route('sheets.index', [
+    'movie' => $movie->id,
+    'schedule' => $schedule->id,
+    'date' => \Carbon\Carbon::today()->toDateString(),
+]) }}">
+    座席を予約する
+</a>
 
 <a href="{{ route('admin.movies.index') }}">一覧に戻る</a>
 @endsection

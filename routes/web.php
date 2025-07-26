@@ -5,13 +5,8 @@ use App\Http\Controllers\PracticeController;
 use App\Http\Controllers\MovieController as PublicMovieController;
 use App\Http\Controllers\Admin\MovieController as AdminMovieController;
 use App\Http\Controllers\SheetController;
-use App\Http\Controllers\MovieController;
 use App\Http\Controllers\Admin\ScheduleController;
-
-Route::get('/practice', [PracticeController::class, 'sample']);
-Route::get('/practice2', [PracticeController::class, 'sample2']);
-Route::get('/practice3', [PracticeController::class, 'sample3']);
-Route::get('/getPractice', [PracticeController::class, 'getPractice']);
+use App\Http\Controllers\ReservationController;
 
 Route::get('/movies', [PublicMovieController::class, 'index'])->name('movies.index');
 
@@ -32,6 +27,13 @@ Route::prefix('admin')->group(function () {
     Route::post('movies/{id}/schedules/store', [ScheduleController::class, 'store'])->name('admin.schedules.store');
 });
 
-
-Route::get('/sheets', [SheetController::class, 'index'])->name('sheets.index');
 Route::get('/movies/{id}', [PublicMovieController::class, 'show'])->name('movies.show');
+
+Route::get('/movies/{movie}/schedules/{schedule}/sheets', [SheetController::class, 'index'])->name('sheets.index');
+
+Route::get('/movies/{movie_id}/schedules/{schedule_id}/reservations/create', [ReservationController::class, 'create'])
+    ->name('reservation.create');
+Route::post('/reservations/store', [ReservationController::class, 'store'])
+    ->name('reservation.store');
+
+Route::get('/sheets', [SheetController::class, 'indexSimple'])->name('sheets.simple');

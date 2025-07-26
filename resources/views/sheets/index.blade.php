@@ -1,5 +1,3 @@
-{{-- resources/views/sheets/index.blade.php --}}
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -17,13 +15,12 @@
         <tr>
             <td></td><td></td><td colspan="3">スクリーン</td><td></td><td></td>
         </tr>
-        @foreach ($sheets as $row => $columns)
-            <tr>
-                @foreach ($columns as $sheet)
-                    <td>{{ $sheet->row }}-{{ $sheet->column }}</td>
-                @endforeach
-            </tr>
-        @endforeach
+       @foreach ($sheets as $sheet)
+    <tr>
+        <td>{{ $sheet->row }}-{{ $sheet->column }}</td>
+    </tr>
+@endforeach
+
     </table>
 </body>
 </html>
