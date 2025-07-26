@@ -5,25 +5,43 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Sheet;
 use App\Models\Schedule;
+use App\Models\Reservation;
+use Carbon\CarbonImmutable;
 
 class ReservationController extends Controller
 {
-    public function create(Request $request, int $movie_id, int $schedule_id)
-    {
-        $date = $request->query('date');
-        $sheetId = $request->query('sheetId'); // クエリパラメータ名に合わせる
+public function create(Request $request, $movieId, $scheduleId)
+{
+    $date = $request->query('date');
+    $sheetId = $request->query('sheetId');
 
-        if (!$date || !$sheetId) {
-            abort(400, '日付または座席番号が指定されていません');
-        }
-
-        $sheet = Sheet::find($sheetId);
-        if (!$sheet) {
-            abort(400, '指定された座席が存在しません');
-        }
-
-        return view('reservations.create', compact('movie_id', 'schedule_id', 'date', 'sheet'));
+    // date or sheetId がない場合
+    if (!$date || !$sheetId) {
+        abort(400, '必須のパラメータが不足しています');
     }
+
+    // 対象座席が予約済みかチェック
+    $exists = Reservation::where('schedule_id', $scheduleId)
+        ->where('sheet_id', $sheetId)
+        ->where('date', CarbonImmutable::parse($date)->format('Y-m-d'))
+        ->where('is_canceled', false)
+        ->exists();
+
+    if ($exists) {
+        abort(400, 'この座席はすでに予約されています');
+    }
+
+   $sheet = Sheet::findOrFail($sheetId);
+
+return view('reservations.create', [
+    'movie_id' => $movieId,
+    'schedule_id' => $scheduleId,
+    'sheet_id' => $sheetId,
+    'sheet' => $sheet, // ← 追加
+    'date' => $date,
+]);
+
+}
 
     public function store(Request $request)
     {
