@@ -7,6 +7,8 @@ use App\Http\Controllers\Admin\MovieController as AdminMovieController;
 use App\Http\Controllers\SheetController;
 use App\Http\Controllers\Admin\ScheduleController;
 use App\Http\Controllers\ReservationController;
+use App\Http\Controllers\Admin\ReservationController as AdminReservationController;
+
 
 Route::get('/movies', [PublicMovieController::class, 'index'])->name('movies.index');
 
@@ -25,15 +27,19 @@ Route::prefix('admin')->group(function () {
     Route::delete('schedules/{id}/destroy', [ScheduleController::class, 'destroy'])->name('admin.schedules.destroy');
     Route::get('movies/{id}/schedules/create', [ScheduleController::class, 'create'])->name('admin.schedules.create');
     Route::post('movies/{id}/schedules/store', [ScheduleController::class, 'store'])->name('admin.schedules.store');
+    Route::get('reservations', [AdminReservationController::class, 'index'])->name('admin.reservations.index');
+    Route::get('reservations/create', [AdminReservationController::class, 'create'])->name('admin.reservations.create');
+    Route::post('reservations', [AdminReservationController::class, 'store'])->name('admin.reservations.store');
+    Route::get('reservations/{id}/edit', [AdminReservationController::class, 'edit'])->name('admin.reservations.edit');
+    Route::match(['put', 'patch'], 'reservations/{id}', [AdminReservationController::class, 'update'])->name('admin.reservations.update');
+    Route::delete('reservations/{id}', [AdminReservationController::class, 'destroy'])->name('admin.reservations.destroy');
 });
 
+
 Route::get('/movies/{id}', [PublicMovieController::class, 'show'])->name('movies.show');
-
 Route::get('/movies/{movie}/schedules/{schedule}/sheets', [SheetController::class, 'index'])->name('sheets.index');
-
 Route::get('/movies/{movie_id}/schedules/{schedule_id}/reservations/create', [ReservationController::class, 'create'])
     ->name('reservation.create');
 Route::post('/reservations/store', [ReservationController::class, 'store'])
     ->name('reservation.store');
-
 Route::get('/sheets', [SheetController::class, 'indexSimple'])->name('sheets.simple');
