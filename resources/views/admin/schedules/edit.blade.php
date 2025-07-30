@@ -7,6 +7,16 @@
     @csrf
     @method('PATCH')
 
+    <label>スクリーン
+        <select name="screen_id" required>
+            @foreach ($screens as $screen)
+                <option value="{{ $screen->id }}" {{ $schedule->screen_id == $screen->id ? 'selected' : '' }}>
+                    {{ $screen->name }}
+                </option>
+            @endforeach
+        </select>
+    </label>
+
     <label>開始日付
         <input type="date" name="start_time_date" value="{{ $startDate }}" required>
     </label>
@@ -17,7 +27,7 @@
         <input type="date" name="end_time_date" value="{{ $endDate }}" required>
     </label>
     <label>終了時間
-        <input type="time" name="end_time_time" value="{{ $endTime }}" required>
+        <input type="time" name="end_time" value="{{ $endTime }}" required>
     </label>
 
     <button type="submit">更新</button>

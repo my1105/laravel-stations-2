@@ -15,17 +15,18 @@ public function create(Request $request, $movieId, $scheduleId)
     $date = $request->query('date');
     $sheetId = $request->query('sheetId');
 
-    // date or sheetId がない場合
     if (!$date || !$sheetId) {
         abort(400, '必須のパラメータが不足しています');
     }
 
-    // 対象座席が予約済みかチェック
-    $exists = Reservation::where('schedule_id', $scheduleId)
-        ->where('sheet_id', $sheetId)
-        ->where('date', CarbonImmutable::parse($date)->format('Y-m-d'))
-        ->where('is_canceled', false)
-        ->exists();
+
+    $exists = Reservation::where('schedule_id', $request->schedule_id)
+    ->where('sheet_id', $request->sheet_id)
+    ->whereHas('sheet', function ($query) use ($request) {
+        $query->where('screen_id', $request->screen_id);
+    })
+    ->exists();
+
 
     if ($exists) {
         abort(400, 'この座席はすでに予約されています');
@@ -37,7 +38,7 @@ return view('reservations.create', [
     'movie_id' => $movieId,
     'schedule_id' => $scheduleId,
     'sheet_id' => $sheetId,
-    'sheet' => $sheet, // ← 追加
+    'sheet' => $sheet,
     'date' => $date,
 ]);
 
@@ -56,11 +57,13 @@ return view('reservations.create', [
     $schedule = \App\Models\Schedule::find($validated['schedule_id']);
 
 
-        $exists = \App\Models\Reservation::where('schedule_id', $validated['schedule_id'])
-            ->where('sheet_id', $validated['sheet_id'])
-            ->where('date', $validated['date'])
-            ->where('is_canceled', false)
-            ->exists();
+        $exists = Reservation::where('schedule_id', $request->schedule_id)
+        ->where('sheet_id', $request->sheet_id)
+        ->whereHas('sheet', function ($query) use ($request) {
+            $query->where('screen_id', $request->screen_id);
+        })
+        ->exists();
+
 
         if ($exists) {
             return redirect()->route('sheets.index', [
@@ -70,7 +73,7 @@ return view('reservations.create', [
             ])->with('error', 'その座席はすでに予約済みです');
         }
 
- \App\Models\Reservation::create([
+        \App\Models\Reservation::create([
         'schedule_id' => $validated['schedule_id'],
         'sheet_id' => $validated['sheet_id'],
         'name' => $validated['name'],

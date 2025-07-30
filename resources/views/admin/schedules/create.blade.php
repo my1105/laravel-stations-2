@@ -5,6 +5,14 @@
 
 <form method="POST" action="{{ route('admin.schedules.store', $movie->id) }}">
     @csrf
+    <label>スクリーン
+        <select name="screen_id" required>
+            @foreach ($screens as $screen)
+                <option value="{{ $screen->id }}">{{ $screen->name }}</option>
+            @endforeach
+        </select>
+    </label>
+
     <label>開始日付
         <input type="date" name="start_time_date" required>
     </label>
@@ -20,6 +28,7 @@
 
     <button type="submit">追加</button>
 </form>
+
 
 <a href="{{ route('admin.schedules.index') }}">戻る</a>
 @endsection

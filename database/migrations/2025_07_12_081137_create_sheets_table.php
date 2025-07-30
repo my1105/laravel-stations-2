@@ -11,12 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sheets', function (Blueprint $table) {
-        $table->id();
-        $table->unsignedInteger('column');
-        $table->string('row');
-        $table->timestamps();
-    });
+       Schema::create('sheets', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('screen_id')->constrained()->after('id');
+            $table->unsignedInteger('column');
+            $table->string('row');
+            $table->timestamps();
+});
+
     }
 
     /**
