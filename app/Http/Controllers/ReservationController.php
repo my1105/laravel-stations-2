@@ -4,85 +4,69 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Sheet;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Schedule;
 use App\Models\Reservation;
-use Carbon\CarbonImmutable;
 
 class ReservationController extends Controller
 {
-public function create(Request $request, $movieId, $scheduleId)
-{
-    $date = $request->query('date');
-    $sheetId = $request->query('sheetId');
-
-    if (!$date || !$sheetId) {
-        abort(400, '必須のパラメータが不足しています');
+    public function __construct()
+    {
+        $this->middleware('auth');
     }
 
+    public function create(Request $request, $movieId, $scheduleId)
+    {
+        $date = $request->query('date');
+        $sheetId = $request->query('sheetId');
 
-    $exists = Reservation::where('schedule_id', $request->schedule_id)
-    ->where('sheet_id', $request->sheet_id)
-    ->whereHas('sheet', function ($query) use ($request) {
-        $query->where('screen_id', $request->screen_id);
-    })
-    ->exists();
+        if (!$date || !$sheetId) {
+            abort(400, '必須のパラメータが不足しています');
+        }
 
+        $exists = Reservation::where('schedule_id', $scheduleId)
+            ->where('sheet_id', $sheetId)
+            ->exists();
 
-    if ($exists) {
-        abort(400, 'この座席はすでに予約されています');
+        if ($exists) {
+            abort(400, 'この座席はすでに予約されています');
+        }
+
+        $sheet = Sheet::findOrFail($sheetId);
+
+        return view('reservations.create', [
+            'movie_id' => $movieId,
+            'schedule_id' => $scheduleId,
+            'sheet_id' => $sheetId,
+            'sheet' => $sheet,
+            'date' => $date,
+        ]);
     }
-
-   $sheet = Sheet::findOrFail($sheetId);
-
-return view('reservations.create', [
-    'movie_id' => $movieId,
-    'schedule_id' => $scheduleId,
-    'sheet_id' => $sheetId,
-    'sheet' => $sheet,
-    'date' => $date,
-]);
-
-}
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-        'schedule_id' => 'required|integer|exists:schedules,id',
-        'sheet_id' => 'required|integer|exists:sheets,id',
-        'name' => 'required|string|max:255',
-        'email' => 'required|email|max:255',
-        'date' => 'required|date',
-    ]);
+            'schedule_id' => 'required|integer|exists:schedules,id',
+            'sheet_id' => 'required|integer|exists:sheets,id',
+        ]);
 
-    $schedule = \App\Models\Schedule::find($validated['schedule_id']);
-
-
-        $exists = Reservation::where('schedule_id', $request->schedule_id)
-        ->where('sheet_id', $request->sheet_id)
-        ->whereHas('sheet', function ($query) use ($request) {
-            $query->where('screen_id', $request->screen_id);
-        })
-        ->exists();
-
+        // 重複チェック
+        $exists = Reservation::where('schedule_id', $validated['schedule_id'])
+            ->where('sheet_id', $validated['sheet_id'])
+            ->exists();
 
         if ($exists) {
-            return redirect()->route('sheets.index', [
-                'movie' => \App\Models\Schedule::findOrFail($validated['schedule_id'])->movie_id,
-                'schedule' => $validated['schedule_id'],
-                'date' => $validated['date'],
-            ])->with('error', 'その座席はすでに予約済みです');
+            return redirect()->back()->withErrors(['sheet_id' => 'その座席はすでに予約済みです']);
         }
 
-        \App\Models\Reservation::create([
-        'schedule_id' => $validated['schedule_id'],
-        'sheet_id' => $validated['sheet_id'],
-        'name' => $validated['name'],
-        'email' => $validated['email'],
-        'date' => $validated['date'],
-        'is_canceled' => false,
-    ]);
 
-         return redirect()->route('movies.show', ['id' => $schedule->movie_id])
-        ->with('success', '予約が完了しました');
+        Reservation::create([
+            'user_id' => Auth::id(),
+            'schedule_id' => $validated['schedule_id'],
+            'sheet_id' => $validated['sheet_id'],
+            'name' => Auth::user()->name,
+            'email' => Auth::user()->email,
+        ]);
+        return redirect()->route('reservations.index')->with('success', '予約完了');
     }
 }

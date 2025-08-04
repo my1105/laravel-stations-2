@@ -16,12 +16,15 @@
         "laravel/tinker": "^2.9"
     },
     "require-dev": {
-        "spatie/laravel-ignition": "^2.8",
         "fakerphp/faker": "^1.23.1",
+        "laravel/breeze": "^2.3",
         "laravel/sail": "^1.32.0",
         "mockery/mockery": "^1.6.12",
         "nunomaduro/collision": "^8.1",
-        "phpunit/phpunit": "^11.0"
+        "pestphp/pest": "^3.8",
+        "pestphp/pest-plugin-laravel": "^3.2",
+        "sebastian/environment": "^7.2",
+        "spatie/laravel-ignition": "^2.8"
     },
     "autoload": {
         "psr-4": {
@@ -58,7 +61,10 @@
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
     },
     "minimum-stability": "dev",
     "prefer-stable": true

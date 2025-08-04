@@ -34,4 +34,31 @@ class Reservation extends Model
     {
         return $this->belongsTo(Sheet::class);
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+
+
+    // app/Models/Reservation.php
+    public static function migrateUserIdFromNameEmail()
+    {
+        // 例: 既存の予約のnameとemailに対応するユーザを検索し user_id をセットする
+        $reservations = self::whereNull('user_id')->get();
+
+        foreach ($reservations as $reservation) {
+            $user = \App\Models\User::where('name', $reservation->name)
+                ->where('email', $reservation->email)
+                ->first();
+
+            if ($user) {
+                $reservation->user_id = $user->id;
+                $reservation->save();
+            }
+        }
+    }
+
+
 }

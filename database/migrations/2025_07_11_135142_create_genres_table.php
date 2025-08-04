@@ -9,18 +9,22 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
-    {
+   public function up(): void
+{
+    if (!Schema::hasTable('genres')) {
         Schema::create('genres', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique(); 
+            $table->string('name')->unique();
             $table->timestamps();
         });
+    }
 
+    if (!Schema::hasColumn('movies', 'genre_id')) {
         Schema::table('movies', function (Blueprint $table) {
             $table->foreignId('genre_id')->constrained()->onDelete('cascade');
         });
     }
+}
 
     /**
      * Reverse the migrations.
